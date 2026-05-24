@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  --background-start: #06111f;
+  --background-end: #0f1b2e;
+  --panel: rgba(11, 23, 40, 0.82);
+  --panel-border: rgba(148, 163, 184, 0.14);
+  --text-primary: #e2e8f0;
+  --text-secondary: #94a3b8;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--text-primary);
+  background:
+    radial-gradient(circle at top left, rgba(16, 185, 129, 0.16), transparent 30%),
+    radial-gradient(circle at top right, rgba(245, 158, 11, 0.10), transparent 25%),
+    linear-gradient(180deg, var(--background-start), var(--background-end));
+  font-family: var(--font-body), sans-serif;
+}
+
+::selection {
+  background: rgba(52, 211, 153, 0.35);
+  color: #ecfeff;
+}
+
+.glass-panel {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  backdrop-filter: blur(18px);
+}
+
+.heading-font {
+  font-family: var(--font-heading), sans-serif;
+}
+
