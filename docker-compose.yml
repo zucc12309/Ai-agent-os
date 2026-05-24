@@ -1,0 +1,51 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: agent_gateway
+      POSTGRES_USER: agent_gateway
+      POSTGRES_PASSWORD: agent_gateway
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U agent_gateway -d agent_gateway"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+    environment:
+      DATABASE_URL: postgresql+asyncpg://agent_gateway:agent_gateway@postgres:5432/agent_gateway
+      ENVIRONMENT: development
+      CORS_ORIGINS: http://localhost:3000,http://127.0.0.1:3000
+      API_KEY_PEPPER: change-me-in-production
+      SESSION_SIGNING_SECRET: change-me-in-production-session-secret
+      DEMO_OPERATOR_API_KEY: agk_demo_operator_dev_only
+      INTERNAL_API_BASE_URL: ""
+      FRONTEND_URL: http://localhost:3000
+      RATE_LIMIT_REQUESTS_PER_MINUTE: 60
+      NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: http://localhost:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
